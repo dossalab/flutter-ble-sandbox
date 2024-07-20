@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_sandbox/providers/ble.dart';
-import 'package:flutter_ble_sandbox/ui/fragments/bluetooth_disabled.dart';
 import 'package:flutter_ble_sandbox/ui/main_page_fragment.dart';
+import 'package:flutter_ble_sandbox/ui/widgets/empty_state.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -28,7 +28,10 @@ class _ScannerContents extends StatelessWidget {
   @override
   Widget build(context) => Consumer<BleProvider>(
         builder: (context, ble, _) => ble.isBluetoothDisabled
-            ? BluetoothDisabledFragment()
+            ? const EmptyState(
+                icon: Icons.bluetooth_disabled,
+                caption: Text('Bluetooth is disabled'),
+              )
             : ble.isScanningAllowed
                 ? _DeviceList()
                 : _PermissionRequestFragment(),
@@ -54,10 +57,8 @@ class _PermissionRequestFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ble = Provider.of<BleProvider>(context, listen: false);
-    return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(20.0),
-        child: RichText(
+    return EmptyState(
+        caption: RichText(
             textAlign: TextAlign.center,
             text:
                 TextSpan(style: DefaultTextStyle.of(context).style, children: [
@@ -89,7 +90,12 @@ class _DeviceList extends StatelessWidget {
   @override
   Widget build(context) => Consumer<BleProvider>(
       builder: (context, ble, _) => ble.discoveredDevices.isEmpty
-          ? const Center(child: Text('Discovered devices will appear here...'))
+          ? const EmptyState(
+              icon: Icons.sync,
+              caption: Text(
+                'No devices discovered yet.\nTry scanning!',
+                textAlign: TextAlign.center,
+              ))
           : RefreshIndicator(
               notificationPredicate: (_) => !ble.isScanning,
               onRefresh: () async {
