@@ -30,7 +30,7 @@ class _ScannerContents extends StatelessWidget {
         builder: (context, ble, _) => ble.isBluetoothDisabled
             ? const EmptyState(
                 icon: Icons.bluetooth_disabled,
-                caption: Text('Bluetooth is disabled'),
+                reason: 'Bluetooth is disabled',
               )
             : ble.isScanningAllowed
                 ? _DeviceList()
@@ -58,31 +58,27 @@ class _PermissionRequestFragment extends StatelessWidget {
   Widget build(BuildContext context) {
     final ble = Provider.of<BleProvider>(context, listen: false);
     return EmptyState(
-        caption: RichText(
-            textAlign: TextAlign.center,
-            text:
-                TextSpan(style: DefaultTextStyle.of(context).style, children: [
-              const TextSpan(
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  text: 'Location permission is needed to scan\n'),
-              TextSpan(
-                  text: 'Tap here',
-                  style: const TextStyle(color: Colors.blue),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      var isGranted = await ble.requestScannerPermission();
-                      if (isGranted) {
-                        ble.startScan();
-                      }
-                    }),
-              const TextSpan(text: ' to request it, or head to your '),
-              TextSpan(
-                  text: 'settings',
-                  style: const TextStyle(color: Colors.blue),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => openAppSettings()),
-              const TextSpan(text: ' and edit permissions manually'),
-            ])));
+        icon: Icons.location_pin,
+        reason: 'Location access is needed to scan',
+        hint: Text.rich(TextSpan(children: [
+          TextSpan(
+              text: 'Tap here',
+              style: const TextStyle(color: Colors.blue),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  var isGranted = await ble.requestScannerPermission();
+                  if (isGranted) {
+                    ble.startScan();
+                  }
+                }),
+          const TextSpan(text: ' to request it, or head to your '),
+          TextSpan(
+              text: 'settings',
+              style: const TextStyle(color: Colors.blue),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => openAppSettings()),
+          const TextSpan(text: ' and edit permissions manually'),
+        ])));
   }
 }
 
@@ -92,10 +88,8 @@ class _DeviceList extends StatelessWidget {
       builder: (context, ble, _) => ble.discoveredDevices.isEmpty
           ? const EmptyState(
               icon: Icons.sync,
-              caption: Text(
-                'No devices discovered yet.\nTry scanning!',
-                textAlign: TextAlign.center,
-              ))
+              reason: 'No devices discovered',
+              hint: Text('Try scanning!'))
           : RefreshIndicator(
               notificationPredicate: (_) => !ble.isScanning,
               onRefresh: () async {
