@@ -66,12 +66,7 @@ class _PermissionRequestFragment extends StatelessWidget {
               text: 'Tap here',
               style: const TextStyle(color: Colors.blue),
               recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  var isGranted = await ble.requestScannerPermission();
-                  if (isGranted) {
-                    ble.startScan();
-                  }
-                }),
+                ..onTap = () => ble.requestScannerPermission()),
           const TextSpan(text: ' to request it, or head to your '),
           TextSpan(
               text: 'settings',

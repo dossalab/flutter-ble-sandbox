@@ -24,11 +24,9 @@ class BleProvider extends ChangeNotifier {
     _bleContext.statusStream.listen((status) => notifyListeners());
   }
 
-  Future<bool> requestScannerPermission() async {
-    var status = await Permission.location.request();
+  Future<void> requestScannerPermission() async {
+    await Permission.location.request();
     notifyListeners();
-
-    return status.isGranted;
   }
 
   void requestBluetoothEnable() async {
