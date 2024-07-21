@@ -110,8 +110,24 @@ class _DeviceListTile extends StatelessWidget {
           maxLines: 1,
         ),
         subtitle: Text(_device.id, maxLines: 1),
-        onTap: () {
-          print('someone tapped me O_o');
-        },
+        onTap: () => showModalBottomSheet(
+            context: context, builder: (context) => _DeviceInfoBottomSheet()),
+      );
+}
+
+class _DeviceInfoBottomSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(children: [
+          const Text('hello world!'),
+          const Spacer(),
+          SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {},
+                child: const Text('Connect'),
+              ))
+        ]),
       );
 }
