@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ble_sandbox/providers/ble.dart';
 import 'package:flutter_ble_sandbox/ui/main_page_fragment.dart';
 import 'package:flutter_ble_sandbox/ui/widgets/empty_state.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -97,14 +98,25 @@ class _DeviceList extends StatelessWidget {
               },
               child: ListView(
                   children: ble.discoveredDevices
-                      .map((device) => ListTile(
-                            leading: const Icon(Icons.bluetooth),
-                            title: Text(device.name),
-                            subtitle: Text(device.id),
-                            onTap: () {
-                              print('someone tapped me O_o');
-                              ble.finishScan();
-                            },
-                          ))
+                      .map((device) => _DeviceListTile(device))
                       .toList())));
+}
+
+class _DeviceListTile extends StatelessWidget {
+  final DiscoveredDevice _device;
+
+  const _DeviceListTile(this._device);
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        leading: const Icon(Icons.bluetooth),
+        title: Text(
+          _device.name,
+          maxLines: 1,
+        ),
+        subtitle: Text(_device.id, maxLines: 1),
+        onTap: () {
+          print('someone tapped me O_o');
+        },
+      );
 }
