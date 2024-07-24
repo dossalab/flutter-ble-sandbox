@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_sandbox/providers/ble.dart';
 import 'package:flutter_ble_sandbox/ui/fragments/home.dart';
+import 'package:flutter_ble_sandbox/ui/fragments/remote_controller.dart';
 import 'package:flutter_ble_sandbox/ui/fragments/scanner.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class _MainPageState extends State<MainPage> {
     final fragments = [
       HomeFragment(),
       ScannerFragment(),
+      RemoteControllerFragment(),
     ];
 
     var currentFragment = fragments[_bottomNavIndex];

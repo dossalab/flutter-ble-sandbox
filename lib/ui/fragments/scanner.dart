@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_sandbox/providers/ble.dart';
+import 'package:flutter_ble_sandbox/ui/fragments/device_info_bottom_sheet.dart';
 import 'package:flutter_ble_sandbox/ui/main_page_fragment.dart';
 import 'package:flutter_ble_sandbox/ui/widgets/empty_state.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -49,15 +50,20 @@ class _ScannerFab extends StatelessWidget {
                   child: const Icon(Icons.clear),
                   onPressed: () => ble.finishScan(),
                 )
-              : FloatingActionButton(
-                  onPressed: () => ble.startScan(),
-                  child: const Icon(Icons.search))));
+              : ble.isConnecting
+                  ? FloatingActionButton(
+                      onPressed: () => ble.cancelConnection(),
+                      child: const Icon(Icons.clear),
+                    )
+                  : FloatingActionButton(
+                      onPressed: () => ble.startScan(),
+                      child: const Icon(Icons.search))));
 }
 
 class _PermissionRequestFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ble = Provider.of<BleProvider>(context, listen: false);
+    final ble = context.read<BleProvider>();
     return EmptyState(
         icon: Icons.location_pin,
         reason: 'Location access is needed to scan',
@@ -114,37 +120,6 @@ class _DeviceListTile extends StatelessWidget {
             showDragHandle: true,
             isScrollControlled: true,
             context: context,
-            builder: (context) => _DeviceInfoBottomSheet(_device)),
+            builder: (context) => DeviceInfoBottomSheet(_device)),
       );
-}
-
-class _DeviceInfoBottomSheet extends StatelessWidget {
-  final DiscoveredDevice _device;
-
-  const _DeviceInfoBottomSheet(this._device);
-
-  @override
-  Widget build(context) {
-    final textTheme = Theme.of(context).textTheme;
-    final isDeviceConnectable = _device.connectable == Connectable.available;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 8, 16.0, 8),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Image.asset(height: 120, 'assets/chip.webp'),
-        Text(_device.name, style: textTheme.titleMedium),
-        Text('Generic Bluetooth device', style: textTheme.labelMedium),
-        const SizedBox(height: 16),
-        SizedBox(
-            width: double.infinity,
-            child: isDeviceConnectable
-                ? FilledButton(
-                    onPressed: () {},
-                    child: const Text('Connect'),
-                  )
-                : const FilledButton(
-                    onPressed: null, child: Text('Connection is not possible')))
-      ]),
-    );
-  }
 }
